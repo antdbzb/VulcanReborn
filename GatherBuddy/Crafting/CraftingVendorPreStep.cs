@@ -47,6 +47,24 @@ public static class CraftingVendorPreStep
     public static bool IsActive
         => _tempListId.HasValue;
 
+    /// <summary>One-line description of the vendor step, or null when idle (seal farming reports its own status).</summary>
+    public static string? Status
+    {
+        get
+        {
+            if (!_tempListId.HasValue || _farmingSeals)
+                return null;
+
+            if (_buying)
+            {
+                var text = GatherBuddy.VendorBuyListManager.StatusText;
+                return string.IsNullOrWhiteSpace(text) ? "Buying materials from vendors" : $"Buying materials: {text}";
+            }
+
+            return "Planning vendor purchases";
+        }
+    }
+
     public static BeginResult Begin(CraftingExecutionPlan plan, Action continueToGather)
     {
         if (IsActive)

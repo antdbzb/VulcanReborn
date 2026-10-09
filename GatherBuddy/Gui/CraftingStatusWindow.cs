@@ -107,6 +107,14 @@ public class CraftingStatusWindow : Window
         ImGui.Text($"State: {GetStateDisplayName(currentState)}");
         ImGui.Text($"Progress: {Math.Min(currentIndex + 1, totalCount)} / {totalCount}");
 
+        var activity = CraftingActivityStatus.Current;
+        if (!string.IsNullOrEmpty(activity))
+        {
+            ImGui.PushTextWrapPos(VulcanUiScaling.Scaled(360f));
+            ImGui.TextColored(new System.Numerics.Vector4(0.45f, 0.78f, 1.0f, 1.0f), activity);
+            ImGui.PopTextWrapPos();
+        }
+
         if (_queueProcessor.Paused && !string.IsNullOrWhiteSpace(_queueProcessor.PauseReason))
         {
             ImGui.PushTextWrapPos();

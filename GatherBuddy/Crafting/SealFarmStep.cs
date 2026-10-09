@@ -51,6 +51,28 @@ public static class SealFarmStep
     public static bool IsActive
         => _phase != Phase.Idle;
 
+    /// <summary>One-line description of what the seal farm is doing right now, or null when idle.</summary>
+    public static string? Status
+    {
+        get
+        {
+            if (_phase == Phase.Idle)
+                return null;
+
+            var stage = _phase switch
+            {
+                Phase.Preparing        => "switching to the combat gearset",
+                Phase.StartingDuty     => "starting the dungeon",
+                Phase.RunningDuty      => "running the dungeon",
+                Phase.WalkingToOfficer => "walking to the Grand Company officer",
+                Phase.TurnIn           => "turning in loot",
+                _                      => "working",
+            };
+            var max = Math.Max(1, GatherBuddy.Config.VulcanAutoDutyConfig.MaxLoops);
+            return $"Farming seals {GetSeals(_currencyItemId):N0} / {_targetSeals:N0} (run {Math.Min(_loops + 1, max)} of {max}): {stage}";
+        }
+    }
+
     public static uint GetSeals(uint currencyItemId)
         => VendorCurrencyAvailabilityResolver.Resolve(VendorCurrencyGroup.GrandCompanySeals, currencyItemId, "Grand Company Seals").AvailableAmount;
 

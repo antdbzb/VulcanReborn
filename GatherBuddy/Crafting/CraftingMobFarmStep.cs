@@ -81,6 +81,47 @@ public static class CraftingMobFarmStep
     public static bool IsActive
         => _phase != Phase.Idle;
 
+    private static readonly Dictionary<uint, string> ItemNames = new();
+
+    /// <summary>One-line description of what mob farming is doing right now, or null when idle.</summary>
+    public static string? Status
+    {
+        get
+        {
+            if (_phase == Phase.Idle)
+                return null;
+            if (_phase == Phase.LoadingData)
+                return "Hunting monsters: loading drop data";
+            if (_jobIndex >= _jobs.Count)
+                return "Hunting monsters: finishing up";
+
+            var job       = _jobs[_jobIndex];
+            var candidate = job.Candidates[Math.Min(_candidateIndex, job.Candidates.Count - 1)];
+            var have      = VendorBuyListManager.GetCurrentInventoryAndArmoryCount(job.ItemId);
+            var stage = _phase switch
+            {
+                Phase.Preparing                       => "switching to the combat gearset",
+                Phase.Teleporting or Phase.WaitingForZone => "teleporting",
+                Phase.Traveling                       => "traveling to the area",
+                Phase.Hunting                         => "fighting",
+                _                                     => "working",
+            };
+            return $"Hunting {candidate.MobName} for {GetItemName(job.ItemId)} ({have} / {job.Needed}), "
+                 + $"area {_candidateIndex + 1} of {job.Candidates.Count}: {stage}";
+        }
+    }
+
+    private static string GetItemName(uint itemId)
+    {
+        if (ItemNames.TryGetValue(itemId, out var name))
+            return name;
+
+        var sheet = Dalamud.GameData.GetExcelSheet<Lumina.Excel.Sheets.Item>();
+        name = sheet != null && sheet.TryGetRow(itemId, out var row) ? row.Name.ExtractText() : $"item {itemId}";
+        ItemNames[itemId] = name;
+        return name;
+    }
+
     public static BeginResult Begin(CraftingExecutionPlan plan, System.Action continueToGather)
     {
         if (IsActive)
