@@ -299,6 +299,7 @@ public class CraftingQueueProcessor
                     _tasks.Add(() => CraftingTasks.TaskExitCraft());
                 }
 
+                DateTime? switchDelay = null;
                 _tasks.Add(() =>
                 {
                     if (Dalamud.Conditions[ConditionFlag.BetweenAreas] || Dalamud.Conditions[ConditionFlag.BetweenAreas51])
@@ -316,6 +317,8 @@ public class CraftingQueueProcessor
                         GatherBuddy.Log.Debug("[CraftingQueueProcessor] Waiting for screen ready before job switch");
                         return CraftingTasks.TaskResult.Retry;
                     }
+                    if (!HumanDelay.Passed(ref switchDelay))
+                        return CraftingTasks.TaskResult.Retry;
                     SwitchJob(requiredJob);
                     return CraftingTasks.TaskResult.Done;
                 });
@@ -1270,7 +1273,7 @@ public class CraftingQueueProcessor
 
         _currentState = QueueState.WaitingForGather;
         StateChanged?.Invoke(_currentState);
-        CraftingGatherBridge.CreateGatherListForMissingIngredients(MaterialTargets);
+        CraftingGatherBridge.BeginGatherStage(MaterialTargets);
     }
     private void RebuildQueueAndMaterialsFromCurrentInventory()
     {

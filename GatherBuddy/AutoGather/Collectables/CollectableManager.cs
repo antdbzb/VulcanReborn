@@ -714,7 +714,7 @@ public unsafe class CollectableManager : IDisposable
         if (shouldSave)
             _config.Save();
 
-        Communicator.PrintError($"[GatherBuddyReborn] {hardFailMessage}");
+        Communicator.PrintError($"[VulcanReborn] {hardFailMessage}");
         Fail(hardFailMessage);
     }
 

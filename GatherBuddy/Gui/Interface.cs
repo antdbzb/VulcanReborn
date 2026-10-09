@@ -12,7 +12,7 @@ namespace GatherBuddy.Gui;
 
 public partial class Interface : Window, IDisposable
 {
-    private const string PluginName = "GatherBuddy Reborn";
+    private const string PluginName = "Vulcan Reborn";
     private const float  MinSize    = 700;
 
     private static GatherBuddy _plugin                 = null!;

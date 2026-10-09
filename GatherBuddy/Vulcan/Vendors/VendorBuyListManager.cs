@@ -104,6 +104,8 @@ public sealed partial class VendorBuyListManager : IDisposable
 
     public bool LastRunHitScripReserveLimit { get; private set; }
 
+    public bool LastRunStopped { get; private set; }
+
     public void Dispose()
     {
         Stop();
@@ -145,7 +147,7 @@ public sealed partial class VendorBuyListManager : IDisposable
         ResetExecutionState();
         _statusText    = "Timed out leaving the previous vendor interaction.";
         GatherBuddy.Log.Error($"[VendorBuyListManager] Timed out leaving the previous vendor interaction. Last blocker: {blocker}");
-        Communicator.PrintError("[GatherBuddyReborn] Timed out leaving the previous vendor interaction.");
+        Communicator.PrintError("[VulcanReborn] Timed out leaving the previous vendor interaction.");
     }
 
     public void OpenWindow()
@@ -405,6 +407,7 @@ public sealed partial class VendorBuyListManager : IDisposable
         _purchaseConstraints = purchaseConstraints;
         _runHitScripReserveLimit = false;
         LastRunHitScripReserveLimit = false;
+        LastRunStopped = false;
         var activeList = listId.HasValue
             ? GetList(listId.Value)
             : ActiveList;
@@ -470,6 +473,7 @@ public sealed partial class VendorBuyListManager : IDisposable
         if (!_isRunning && !_waitingForCancelledPurchase && _activeEntryId == null && !_waitingForShopClose)
             return;
         var shouldStopPurchase = _activeEntryId.HasValue && GatherBuddy.VendorPurchaseManager.IsRunning;
+        LastRunStopped = true;
         ResetExecutionState();
         _statusText = "Vendor list stopped.";
         _activeEntryId = null;
@@ -572,7 +576,7 @@ public sealed partial class VendorBuyListManager : IDisposable
 
         GatherBuddy.Log.Debug($"[VendorBuyListManager] Skipping {entry.ItemName} for the current vendor-list run: {message}");
         if (announceFailure)
-            Communicator.PrintError($"[GatherBuddyReborn] {message}");
+            Communicator.PrintError($"[VulcanReborn] {message}");
     }
 
     private void MarkEntryPartiallyFulfilledForCurrentRun(VendorBuyListEntry entry, string message)
@@ -600,7 +604,7 @@ public sealed partial class VendorBuyListManager : IDisposable
         {
             _statusText = $"Vendor list '{list.Name}' complete.";
             GatherBuddy.Log.Information($"[VendorBuyListManager] Vendor list '{list.Name}' complete.");
-            Communicator.Print($"[GatherBuddyReborn] Vendor list '{list.Name}' complete.");
+            Communicator.Print($"[VulcanReborn] Vendor list '{list.Name}' complete.");
             return;
         }
         var resultParts = new List<string>();
@@ -612,7 +616,7 @@ public sealed partial class VendorBuyListManager : IDisposable
         var detail = string.Join(" and ", resultParts);
         _statusText = $"Vendor list '{list.Name}' completed with {detail}.";
         GatherBuddy.Log.Warning($"[VendorBuyListManager] Vendor list '{list.Name}' completed with {detail}.");
-        Communicator.PrintError($"[GatherBuddyReborn] Vendor list '{list.Name}' completed with {detail}.");
+        Communicator.PrintError($"[VulcanReborn] Vendor list '{list.Name}' completed with {detail}.");
     }
 
     private void EnsureListState()
@@ -687,7 +691,7 @@ public sealed partial class VendorBuyListManager : IDisposable
             _statusText = $"{entry.ItemName} target set to {targetQuantity:N0} in '{list.Name}'.";
 
         if (announce)
-            Communicator.Print($"[GatherBuddyReborn] Added {entry.ItemName} to '{list.Name}' with target {targetQuantity:N0}.");
+            Communicator.Print($"[VulcanReborn] Added {entry.ItemName} to '{list.Name}' with target {targetQuantity:N0}.");
         return true;
     }
 
@@ -733,7 +737,7 @@ public sealed partial class VendorBuyListManager : IDisposable
                 _statusText = $"{existing.ItemName} target set to {existing.TargetQuantity:N0} in '{list.Name}'.";
 
             if (announce)
-                Communicator.Print($"[GatherBuddyReborn] Added {existing.ItemName} to '{list.Name}' with target {existing.TargetQuantity:N0}.");
+                Communicator.Print($"[VulcanReborn] Added {existing.ItemName} to '{list.Name}' with target {existing.TargetQuantity:N0}.");
             return true;
         }
 
@@ -790,9 +794,9 @@ public sealed partial class VendorBuyListManager : IDisposable
         if (announce)
         {
             if (addedTargets.Count == 1)
-                Communicator.Print($"[GatherBuddyReborn] Added {addedTargets[0].Entry.ItemName} to '{list.Name}' with target {addedTargets[0].TargetQuantity:N0}.");
+                Communicator.Print($"[VulcanReborn] Added {addedTargets[0].Entry.ItemName} to '{list.Name}' with target {addedTargets[0].TargetQuantity:N0}.");
             else
-                Communicator.Print($"[GatherBuddyReborn] Added {addedTargets.Count:N0} items to '{list.Name}'.");
+                Communicator.Print($"[VulcanReborn] Added {addedTargets.Count:N0} items to '{list.Name}'.");
         }
 
         return addedTargets.Count;
@@ -1295,6 +1299,7 @@ public sealed partial class VendorBuyListManager : IDisposable
                 BeginShopCloseTransition($"Skipping {result.ItemName} and continuing the vendor list.");
                 break;
             case VendorPurchaseManager.CompletionState.Cancelled:
+                LastRunStopped = true;
                 ResetExecutionState();
                 BeginShopCloseTransition("Leaving vendor interaction.");
                 break;

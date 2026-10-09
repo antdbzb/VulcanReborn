@@ -135,6 +135,8 @@ public partial class VulcanWindow
 
             DrawVulcanRetainerBellConfig();
 
+            DrawVulcanHumanizeConfig();
+
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Spacing();
@@ -328,6 +330,38 @@ public partial class VulcanWindow
         }
         if (ImGui.IsItemHovered())
             ImGui.SetTooltip("Automatically extract materia from fully spiritbonded equipment between crafts");
+    }
+
+    private void DrawVulcanHumanizeConfig()
+    {
+        var config = GatherBuddy.Config.VulcanHumanizeConfig;
+
+        var enabled = config.Enabled;
+        if (ImGui.Checkbox("Natural Action Delays", ref enabled))
+        {
+            config.Enabled = enabled;
+            GatherBuddy.Config.Save();
+        }
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("Wait a short random time before job swaps, teleports, mounting and similar steps so automation looks less instant.");
+
+        if (!config.Enabled)
+            return;
+
+        ImGui.Indent();
+        var min = config.MinSeconds;
+        var max = config.MaxSeconds;
+        ImGui.SetNextItemWidth(VulcanUiScaling.Scaled(160f));
+        var changed = ImGui.SliderFloat("Min delay (s)##humanizeMin", ref min, 0f, 5f, "%.1f");
+        ImGui.SetNextItemWidth(VulcanUiScaling.Scaled(160f));
+        changed |= ImGui.SliderFloat("Max delay (s)##humanizeMax", ref max, 0f, 8f, "%.1f");
+        if (changed)
+        {
+            config.MinSeconds = Math.Min(min, max);
+            config.MaxSeconds = Math.Max(min, max);
+            GatherBuddy.Config.Save();
+        }
+        ImGui.Unindent();
     }
 
     private void DrawVulcanRetainerBellConfig()

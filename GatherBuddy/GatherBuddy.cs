@@ -40,7 +40,8 @@ namespace GatherBuddy;
 
 public partial class GatherBuddy : IDalamudPlugin
 {
-    public const string InternalName = "GatherBuddyReborn";
+    public const string InternalName = "VulcanReborn";
+    public const string IpcPrefix    = "GatherBuddyReborn";
 
     public string Name
         => InternalName;
@@ -262,7 +263,7 @@ public partial class GatherBuddy : IDalamudPlugin
             {
                 Log.Error("First Party GatherBuddy detected. Please uninstall it to use this version.");
                 Communicator.PrintError(
-                    "[GatherBuddy Reborn] First Party GatherBuddy detected. Please uninstall it and restart your game to use this version.");
+                    "[VulcanReborn] First Party GatherBuddy detected. Please uninstall it and restart your game to use this version.");
                 break;
             }
         }
@@ -316,6 +317,9 @@ public partial class GatherBuddy : IDalamudPlugin
             VendorNavigator.Update();
             VendorPurchaseManager.Update();
             VendorBuyListManager.Update();
+            CraftingVendorPreStep.Update();
+            CraftingMobFarmStep.Update();
+            SealFarmStep.Update();
         }
         catch (Exception e)
         {
@@ -352,6 +356,9 @@ public partial class GatherBuddy : IDalamudPlugin
         UptimeManager?.Dispose();
         AutoGather?.Dispose();
         CollectableManager?.Dispose();
+        CraftingMobFarmStep.Cancel();
+        CraftingVendorPreStep.Cancel();
+        SealFarmStep.Cancel();
         VendorBuyListManager?.Dispose();
         VendorPurchaseManager?.Dispose();
         ControllerSupport?.Dispose();

@@ -81,6 +81,8 @@ public partial class Configuration : IPluginConfiguration
     public VulcanRepairConfig VulcanRepairConfig { get; set; } = new();
     public VulcanMateriaConfig VulcanMateriaConfig { get; set; } = new();
     public VulcanRetainerBellConfig VulcanRetainerBellConfig { get; set; } = new();
+    public VulcanHumanizeConfig VulcanHumanizeConfig { get; set; } = new();
+    public VulcanAutoDutyConfig VulcanAutoDutyConfig { get; set; } = new();
     public int VulcanExecutionDelayMs { get; set; } = 300;
     public bool VulcanContextMenuEntries { get; set; } = true;
     public bool ShowRecipeBrowserTooltips { get; set; } = true;
@@ -452,6 +454,28 @@ public partial class Configuration : IPluginConfiguration
 public class VulcanMateriaConfig
 {
     public bool Enabled { get; set; } = false;
+}
+
+public class VulcanAutoDutyConfig
+{
+    /// <summary>When Grand Company vendor purchases need more seals than you have, farm them with AutoDuty first.</summary>
+    public bool Enabled { get; set; } = false;
+
+    /// <summary>Combat gearset slot (0-99) to equip before each run; -1 means use the current job.</summary>
+    public int GearsetIndex { get; set; } = -1;
+
+    /// <summary>Territory type of the dungeon to run.</summary>
+    public uint TerritoryTypeId { get; set; } = 0;
+
+    /// <summary>Safety cap on dungeon runs per seal shortfall.</summary>
+    public int MaxLoops { get; set; } = 10;
+}
+
+public class VulcanHumanizeConfig
+{
+    public bool  Enabled    { get; set; } = true;
+    public float MinSeconds { get; set; } = 1f;
+    public float MaxSeconds { get; set; } = 2f;
 }
 
 public class VulcanRetainerBellConfig

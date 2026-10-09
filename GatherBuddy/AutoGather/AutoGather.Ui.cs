@@ -128,7 +128,7 @@ namespace GatherBuddy.AutoGather
                     {
                         if (GatherBuddy.AutoGather.Enabled)
                         {
-                            Communicator.PrintError("[GatherBuddyReborn] Auto-Gather is enabled! Unable to navigate.");
+                            Communicator.PrintError("[VulcanReborn] Auto-Gather is enabled! Unable to navigate.");
                             return;
                         }
                         //VNavmesh_IPCSubscriber.Nav_PathfindCancelAll();
@@ -148,7 +148,7 @@ namespace GatherBuddy.AutoGather
                         {
                             if (GatherBuddy.AutoGather.Enabled)
                             {
-                                Communicator.PrintError("[GatherBuddyReborn] Auto-Gather is enabled! Unable to navigate.");
+                                Communicator.PrintError("[VulcanReborn] Auto-Gather is enabled! Unable to navigate.");
                                 return;
                             }
                             //VNavmesh_IPCSubscriber.Nav_PathfindCancelAll();

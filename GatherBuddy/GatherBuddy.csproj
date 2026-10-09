@@ -4,7 +4,7 @@
     <LangVersion>preview</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
     <RootNamespace>GatherBuddy</RootNamespace>
-    <AssemblyName>GatherBuddyReborn</AssemblyName>
+    <AssemblyName>VulcanReborn</AssemblyName>
     <Version>7.5.0.0</Version>
     <Company>SoftOtter</Company>
     <Product>GatherBuddy</Product>
@@ -20,7 +20,7 @@
     <CopyLocalLockfileAssemblies>true</CopyLocalLockfileAssemblies>
     <Configurations>Debug;Release</Configurations>
     <Platforms>x64</Platforms>
-    <Name>GatherBuddy Reborn</Name>
+    <Name>Vulcan Reborn</Name>
     <Author>The Combat Reborn Team</Author>
     <Description>Adds commands to simplify gathering by finding nodes and fish and their locations via item name and a UI to keep track of special uptime and weather conditions. Also automatically gathers items based on these conditions using lists that you specify. Automated gathering requires vnavmesh.</Description>
     <Punchline>Simplify Gathering and Fishing to the extreme.</Punchline>

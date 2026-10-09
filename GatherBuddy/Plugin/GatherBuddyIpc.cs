@@ -12,7 +12,7 @@ public sealed class GatherBuddyIpc : IDisposable
     public GatherBuddyIpc(GatherBuddy plugin)
     {
         _plugin = plugin;
-        EzIPC.Init(this, GatherBuddy.InternalName);
+        EzIPC.Init(this, GatherBuddy.IpcPrefix);
         Debug.Assert(AutoGatherWaiting != null);
         Debug.Assert(AutoGatherEnabledChanged != null);
     }

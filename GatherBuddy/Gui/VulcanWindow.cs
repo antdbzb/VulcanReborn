@@ -331,6 +331,7 @@ public partial class VulcanWindow : Window, IDisposable
                     DrawDebugTab();
                     DrawMarketboardTab();
                     DrawVendorsTab();
+                    DrawAutodutyTab();
                 }
             }
         

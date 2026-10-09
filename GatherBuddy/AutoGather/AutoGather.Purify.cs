@@ -21,7 +21,7 @@ namespace GatherBuddy.AutoGather
                 {
                     GatherBuddy.Config.AutoGatherConfig.DoReduce = false;
                     Communicator.PrintError(
-                        "[GatherBuddyReborn] Aetherial reduction is enabled, but the relevant quest has not been completed yet. The feature has been disabled.");
+                        "[VulcanReborn] Aetherial reduction is enabled, but the relevant quest has not been completed yet. The feature has been disabled.");
                 }
                 GatherBuddy.Log.Debug($"[Reduction] Skipping reduction - quest not complete. AR MultiMode: {_autoRetainerMultiModeEnabled}, Original Character: {_originalCharacterNameWorld ?? "null"}");
                 return false;

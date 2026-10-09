@@ -221,11 +221,67 @@ public static class CraftingGatherBridge
         var hasRetainerWork = executionPlan.RetainerRestock && AllaganTools.Enabled
             && (executionPlan.Materials.Count > 0 || executionPlan.RetainerConsumedCraftables.Count > 0);
         if (!hasRetainerWork)
-            CreateGatherListForMissingIngredients(executionPlan.Materials);
+            BeginGatherStage(executionPlan.Materials);
 
         GatherBuddy.CraftingStatusWindow?.SetQueueProcessor(_queueProcessor);
     }
     
+    internal static void BeginGatherStage(Dictionary<uint, int> materials)
+    {
+        var plan = _activeExecutionPlan;
+        if (_isQueueMode && plan != null && (plan.AutoVendorPurchase || plan.AutoMobFarm))
+        {
+            void ToGather()
+            {
+                if (_isQueueMode && ReferenceEquals(_activeExecutionPlan, plan))
+                    CreateGatherListForMissingIngredients(plan.Materials);
+            }
+
+            void AfterVendor()
+            {
+                if (!_isQueueMode || !ReferenceEquals(_activeExecutionPlan, plan))
+                    return;
+                if (!RunMobFarmStage(plan, ToGather))
+                    ToGather();
+            }
+
+            if (plan.AutoVendorPurchase)
+            {
+                var result = CraftingVendorPreStep.Begin(plan, AfterVendor);
+                if (result == CraftingVendorPreStep.BeginResult.Started)
+                    return;
+                if (result == CraftingVendorPreStep.BeginResult.Failed)
+                {
+                    StopQueue();
+                    return;
+                }
+            }
+
+            if (RunMobFarmStage(plan, ToGather))
+                return;
+        }
+
+        CreateGatherListForMissingIngredients(materials);
+    }
+
+    /// <summary>Returns true if the mob farming stage took over (started, or failed and stopped the queue).</summary>
+    private static bool RunMobFarmStage(CraftingExecutionPlan plan, System.Action toGather)
+    {
+        if (!plan.AutoMobFarm)
+            return false;
+
+        switch (CraftingMobFarmStep.Begin(plan, toGather))
+        {
+            case CraftingMobFarmStep.BeginResult.Started:
+                return true;
+            case CraftingMobFarmStep.BeginResult.Failed:
+                StopQueue();
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static void CreateGatherListForMissingIngredients(Dictionary<uint, int> missing)
     {
         try
@@ -713,6 +769,8 @@ public static class CraftingGatherBridge
     
     public static void StopQueue()
     {
+        CraftingVendorPreStep.Cancel();
+        CraftingMobFarmStep.Cancel();
         if (_queueProcessor != null)
         {
             GatherBuddy.Log.Information("[CraftingGatherBridge] Stopping queue processor");

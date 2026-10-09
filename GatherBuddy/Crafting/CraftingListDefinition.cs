@@ -34,6 +34,9 @@ public class CraftingListDefinition
     public bool Repair { get; set; } = false;
     public int RepairPercent { get; set; } = 50;
     public bool RetainerRestock { get; set; } = false;
+    public bool AutoVendorPurchase { get; set; } = false;
+    public bool AutoMobFarm { get; set; } = false;
+    public int MobFarmGearset { get; set; } = 0;
     public bool Ephemeral { get; set; } = false;
 
     public bool ShouldApplyQuickSynthAllOverrides(bool isOriginalRecipe)
@@ -98,6 +101,9 @@ public class CraftingListDefinition
             Repair = Repair,
             RepairPercent = RepairPercent,
             RetainerRestock = RetainerRestock,
+            AutoVendorPurchase = AutoVendorPurchase,
+            AutoMobFarm = AutoMobFarm,
+            MobFarmGearset = MobFarmGearset,
             Ephemeral = Ephemeral,
         };
 

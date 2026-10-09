@@ -1004,7 +1004,7 @@ public sealed class VendorPurchaseManager : IDisposable
             return;
 
         GatherBuddy.Log.Information($"[VendorPurchaseManager] {message}");
-        Communicator.Print($"[GatherBuddyReborn] {message}");
+        Communicator.Print($"[VulcanReborn] {message}");
         var result = new PurchaseResult(
             CompletionState.Completed,
             _request.ItemId,
@@ -1030,7 +1030,7 @@ public sealed class VendorPurchaseManager : IDisposable
         else
         {
             GatherBuddy.Log.Error($"[VendorPurchaseManager] {message}");
-            Communicator.PrintError($"[GatherBuddyReborn] {message}");
+            Communicator.PrintError($"[VulcanReborn] {message}");
         }
         var result = new PurchaseResult(
             CompletionState.PartiallyCompleted,
@@ -1070,7 +1070,7 @@ public sealed class VendorPurchaseManager : IDisposable
             return;
 
         GatherBuddy.Log.Error($"[VendorPurchaseManager] {message}");
-        Communicator.PrintError($"[GatherBuddyReborn] {message}");
+        Communicator.PrintError($"[VulcanReborn] {message}");
         var result = new PurchaseResult(
             CompletionState.Failed,
             _request.ItemId,

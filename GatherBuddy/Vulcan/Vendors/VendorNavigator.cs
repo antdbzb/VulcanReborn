@@ -564,6 +564,7 @@ public class VendorNavigator
     private int                      _groundRetryCount;
     private DateTime                 _forceInteractionRangeApproachUntil;
     private DateTime                 _lastTeleportWaitDiagnosticsLogTime;
+    private DateTime?                _teleportDelay;
 
     public bool               IsReadyToPurchase => _state == State.ReadyToPurchase;
     public bool               IsFailed          => _state == State.Failed;
@@ -577,6 +578,7 @@ public class VendorNavigator
     {
         Stop();
         _target            = target;
+        _teleportDelay     = null;
         _teleportAttempted = false;
         _stateStartTime    = DateTime.UtcNow;
         _forcedHousingEntryOriginTerritoryId = 0;
@@ -766,6 +768,9 @@ public class VendorNavigator
             QueueLocalAethernetTeleport(aethernetName, parentTerritoryId);
             return;
         }
+
+        if (!global::GatherBuddy.Crafting.HumanDelay.Passed(ref _teleportDelay))
+            return;
 
         if (Teleporter.Teleport(aetheryteId))
         {

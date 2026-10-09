@@ -41,7 +41,7 @@ public partial class AutoGather
         if (!QuestManager.IsQuestComplete(66174))
         {
             GatherBuddy.Config.AutoGatherConfig.DoMaterialize = false;
-            Communicator.PrintError("[GatherBuddy Reborn] Materia Extraction enabled but relevant quest not complete yet. Feature disabled.");
+            Communicator.PrintError("[VulcanReborn] Materia Extraction enabled but relevant quest not complete yet. Feature disabled.");
             return;
         }
         if (MaterializeAddon == null)

@@ -23,7 +23,7 @@ public sealed class UniversalisService : IDisposable
     public UniversalisService()
     {
         _http = new HttpClient { Timeout = TimeSpan.FromMilliseconds(RequestTimeoutMs) };
-        _http.DefaultRequestHeaders.Add("User-Agent", "GatherBuddyReborn-Vulcan");
+        _http.DefaultRequestHeaders.Add("User-Agent", "VulcanReborn");
     }
 
     public async Task<List<MarketItemData>> GetMarketDataAsync(

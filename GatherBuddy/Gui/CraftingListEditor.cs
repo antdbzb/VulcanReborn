@@ -543,7 +543,7 @@ public class CraftingListEditor
         var lineH   = ImGui.GetTextLineHeightWithSpacing();
         var spacing = ImGui.GetStyle().ItemSpacing.Y;
         var frameH  = ImGui.GetFrameHeightWithSpacing();
-        var footerRows = 7 + (_list.QuickSynthAll ? 2 : 0) + (_list.SkipIfEnough ? 1 : 0);
+        var footerRows = 9 + (_list.QuickSynthAll ? 2 : 0) + (_list.SkipIfEnough ? 1 : 0) + (_list.AutoMobFarm ? 1 : 0);
         var bottomH = frameH * footerRows + spacing * 2;
         var queueH  = Math.Max(ImGui.GetContentRegionAvail().Y - bottomH, lineH * 3);
 
@@ -681,6 +681,39 @@ public class CraftingListEditor
             ImGui.SetTooltip(allaganEnabled
                 ? "Withdraw needed materials from retainers before generating the gather list. Respects HQ/NQ preferences."
                 : "Requires Allagan Tools to be installed and enabled.");
+
+        var autoVendor = _list.AutoVendorPurchase;
+        if (ImGui.Checkbox("Auto Vendor Purchase##avp", ref autoVendor))
+        {
+            _list.AutoVendorPurchase = autoVendor;
+            GatherBuddy.CraftingListManager.SaveList(_list);
+        }
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("After retainer restock (if enabled) and before gathering, buy any still-missing vendor-sold materials using a temporary vendor list. Requires vnavmesh.");
+
+        var autoMobFarm = _list.AutoMobFarm;
+        if (ImGui.Checkbox("Auto Mob Farming##amf", ref autoMobFarm))
+        {
+            _list.AutoMobFarm = autoMobFarm;
+            GatherBuddy.CraftingListManager.SaveList(_list);
+        }
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("After vendor purchases and before gathering, hunt the monsters that drop any still-missing materials. Requires vnavmesh and Wrath Combo (IPC enabled) to handle combat.");
+
+        if (_list.AutoMobFarm)
+        {
+            ImGui.Indent();
+            var gearset = _list.MobFarmGearset;
+            ImGui.SetNextItemWidth(VulcanUiScaling.Scaled(80f));
+            if (ImGui.InputInt("Combat gearset##amfgs", ref gearset, 0, 0))
+            {
+                _list.MobFarmGearset = Math.Clamp(gearset, 0, 100);
+                GatherBuddy.CraftingListManager.SaveList(_list);
+            }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("Gearset number (1-100) to switch to for fighting when you start on a crafter/gatherer. 0 = require that you are already on a combat job.");
+            ImGui.Unindent();
+        }
 
 
         ImGui.Spacing();
